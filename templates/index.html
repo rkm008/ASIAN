@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Link Generator</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<div class="container">
+    <h1>Link Generator</h1>
+    <form method="POST" action="/generate">
+        <input type="text" name="asin" placeholder="Enter ASIN" required>
+        <button type="submit">Generate</button>
+    </form>
+
+    {% if short_link %}
+    <div class="result-box">
+        <p>Shortened Link:</p>
+        <div style="display: flex; flex-direction: column; gap: 10px;">
+            <a href="{{ short_link }}" target="_blank" style="color:#00c6ff; word-break: break-all;">{{ short_link }}</a>
+            <button class="small-btn" onclick="copyResult('{{ short_link }}', this)">Copy Link</button>
+        </div>
+    </div>
+    {% endif %}
+
+    <div class="nav">
+        <a href="/">Back to Search</a>
+    </div>
+</div>
+
+<script>
+function copyResult(text, btn) {
+    const originalText = btn.innerText;
+    const textArea = document.createElement("textarea");
+    textArea.value = text;
+    document.body.appendChild(textArea);
+    textArea.select();
+    document.execCommand('copy');
+    document.body.removeChild(textArea);
+    
+    btn.innerText = "Done!";
+    btn.classList.add("copy-success");
+    setTimeout(() => {
+        btn.innerText = originalText;
+        btn.classList.remove("copy-success");
+    }, 1000);
+}
+</script>
+</body>
+</html>
