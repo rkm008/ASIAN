@@ -1,0 +1,92 @@
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: linear-gradient(135deg, #1e3c72, #2a5298);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    color: white;
+}
+
+.container {
+    background: rgba(0, 0, 0, 0.6);
+    padding: 25px;
+    border-radius: 15px;
+    width: 95%;
+    max-width: 450px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.5);
+}
+
+h1 { text-align: center; margin-bottom: 20px; }
+
+input, textarea {
+    width: 100%;
+    padding: 12px;
+    margin: 10px 0;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    box-sizing: border-box;
+}
+
+textarea { height: 100px; resize: none; }
+
+button {
+    width: 100%;
+    padding: 12px;
+    background: #00c6ff;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 10px;
+    color: white;
+}
+
+button:hover { background: #0072ff; }
+
+/* Navigation and Layout */
+.nav { margin-top: 20px; text-align: center; }
+.nav a { color: #00c6ff; text-decoration: none; margin: 0 10px; font-weight: bold; }
+
+.top-right {
+    position: fixed;
+    top: 15px;
+    right: 15px;
+    z-index: 1000;
+}
+
+/* Search Result Styles */
+.result-box {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 15px;
+    border-radius: 10px;
+    margin-top: 20px;
+}
+
+/* Small buttons for search results */
+.small-btn {
+    width: auto;
+    padding: 6px 12px;
+    font-size: 12px;
+    margin: 4px 2px;
+    display: inline-block;
+    border-radius: 5px;
+    cursor: pointer;
+    border: none;
+    color: white;
+    background: #00c6ff;
+}
+
+.edit-btn { background: #ff9800; }
+.edit-btn:hover { background: #e68a00; }
+
+.delete { background: #f44336; }
+.delete:hover { background: #ff416c; }
+
+/* NEW: Visual feedback for copying without popups */
+.copy-success { 
+    background: #4CAF50 !important; 
+}
