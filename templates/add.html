@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Add ASIN</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<div class="container">
+    <h1>Add New ASIN</h1>
+    <form method="POST">
+        <input type="text" name="asin" placeholder="Enter ASIN" required>
+        <textarea name="keyword_block" placeholder="Enter Keywords" required></textarea>
+        <button type="submit">Save</button>
+    </form>
+    <div class="nav">
+        <a href="/">Home (Search)</a>
+    </div>
+</div>
+</body>
+</html>

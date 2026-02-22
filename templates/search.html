@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Live Search</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="top-right">
+        {% if logged_in %}
+            <a href="/logout"><button class="small-btn delete" style="width:auto;">Logout</button></a>
+        {% else %}
+            <a href="/login"><button class="small-btn edit-btn" style="width:auto;">Login</button></a>
+        {% endif %}
+    </div>
+
+<div class="container">
+    <h1>Live Search</h1>
+    <p id="counterDisplay" style="text-align: center; color: #00c6ff; font-weight: bold; margin-bottom: 10px;"></p>
+    <input type="text" id="searchInput" placeholder="Type ASIN...">
+    <div id="results"></div>
+    <div class="nav">
+        {% if logged_in %}<a href="/add">Add ASIN</a> | {% endif %}
+        <a href="/generator">Link Generator</a>
+    </div>
+</div>
+
+<script>
+// Updated copy function: No alert, button turns green and says "Done!"
+function copyText(text, btn) {
+    const originalText = btn.innerText;
+    const textArea = document.createElement("textarea");
+    textArea.value = text;
+    document.body.appendChild(textArea);
+    textArea.select();
+    try {
+        document.execCommand('copy');
+        btn.innerText = "Done!";
+        btn.classList.add("copy-success"); // Makes it green
+        setTimeout(() => {
+            btn.innerText = originalText;
+            btn.classList.remove("copy-success"); // Returns to original color
+        }, 1000);
+    } catch (err) {
+        console.error("Copy failed");
+    }
+    document.body.removeChild(textArea);
+}
+
+function deleteAsin(id){
+    if (confirm("Delete this ASIN?")) {
+        fetch("/delete/" + id, { method: "DELETE" }).then(() => document.getElementById("card-"+id).remove());
+    }
+}
+
+document.getElementById("searchInput").addEventListener("input", function() {
+    let query = this.value.trim();
+    let resultsDiv = document.getElementById("results");
+    let counter = document.getElementById("counterDisplay");
+
+    if (query === "") { 
+        resultsDiv.innerHTML = ""; 
+        counter.innerText = "";
+        return; 
+    }
+
+    fetch("/live_search", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ asin: query })
+    })
+    .then(response => response.json())
+    .then(data => {
+        resultsDiv.innerHTML = "";
+        counter.innerText = data.results.length + " results found for '" + query + "'";
+
+        data.results.forEach(item => {
+            let card = document.createElement("div");
+            card.className = "result-box";
+            card.id = "card-" + item[0];
+            card.innerHTML = `
+                <strong>ASIN:</strong> <span>${item[1]}</span> 
+                <button class="small-btn" onclick="copyText('${item[1]}', this)">Copy</button>
+                ${data.logged_in ? `
+                    <a href="/edit/${item[0]}"><button class="small-btn edit-btn">Edit</button></a>
+                    <button class="small-btn delete" onclick="deleteAsin(${item[0]})">Delete</button>
+                ` : ''}
+                <br>
+                <div id="keyword-${item[0]}" style="white-space: pre-wrap; margin-top:10px; background:rgba(0,0,0,0.2); padding:5px; border-radius:5px;">${item[2]}</div>
+                <button class="small-btn" onclick="copyText(document.getElementById('keyword-${item[0]}').innerText, this)">Copy Keyword</button>
+            `;
+            resultsDiv.appendChild(card);
+        });
+    });
+});
+</script>
+</body>
+</html>
