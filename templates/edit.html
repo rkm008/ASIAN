@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Edit Data</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<div class="container">
+    <h1>Edit ASIN Data</h1>
+    <form method="POST">
+        <input type="text" name="asin" value="{{ item[1] }}" required>
+        <textarea name="keyword_block" required>{{ item[2] }}</textarea>
+        <button type="submit">Save Changes</button>
+    </form>
+    <div class="nav">
+        <a href="/">Cancel</a>
+    </div>
+</div>
+</body>
+</html>

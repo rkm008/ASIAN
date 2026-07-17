@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Amazon Tag Settings</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: #0a0c10; /* Deep dark base */
+            /* Smoke/Fluid background effect */
+            background-image: 
+                radial-gradient(circle at 20% 30%, rgba(20, 35, 50, 0.8) 0%, transparent 40%),
+                radial-gradient(circle at 80% 70%, rgba(15, 25, 40, 0.9) 0%, transparent 50%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            color: white;
+        }
+
+        .card {
+            position: relative;
+            width: 100%;
+            max-width: 400px;
+            padding: 40px;
+            border-radius: 28px;
+            
+            /* Glassmorphism Core */
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(25px) saturate(160%);
+            -webkit-backdrop-filter: blur(25px) saturate(160%);
+            
+            /* Liquid Edge: A bright, thin highlight */
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 
+                0 25px 50px -12px rgba(0, 0, 0, 0.7),
+                inset 0 1px 1px rgba(255, 255, 255, 0.3); /* Surface highlight */
+            
+            text-align: center;
+        }
+
+        h2 {
+            font-weight: 600;
+            margin-bottom: 24px;
+            letter-spacing: -0.5px;
+            color: #ffffff;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 12px;
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        strong {
+            color: #ffffff;
+            font-weight: 500;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 16px;
+            margin-bottom: 24px;
+            border-radius: 14px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(0, 0, 0, 0.3);
+            color: white;
+            font-size: 1rem;
+            outline: none;
+            transition: all 0.3s ease;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.4);
+        }
+
+        input:focus {
+            border-color: rgba(255, 255, 255, 0.4);
+            background: rgba(0, 0, 0, 0.5);
+        }
+
+        button {
+            width: 100%;
+            padding: 16px;
+            border-radius: 14px;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            color: white;
+            
+            /* The "Liquid Blue" Button */
+            background: linear-gradient(145deg, #007aff, #0056b3);
+            box-shadow: 
+                0 8px 20px rgba(0, 122, 255, 0.3),
+                inset 0 1px 2px rgba(255, 255, 255, 0.4);
+            
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        button:hover {
+            box-shadow: 0 12px 24px rgba(0, 122, 255, 0.4);
+            transform: translateY(-1px);
+        }
+
+        button:active {
+            transform: scale(0.98);
+        }
+
+        .back {
+            display: inline-block;
+            margin-top: 24px;
+            color: #007aff;
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: opacity 0.2s;
+        }
+
+        .back:hover {
+            opacity: 0.8;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <h2>Update Amazon Tag</h2>
+        <form method="POST">
+            <label>Current Tag: <strong>{{ current_tag }}</strong></label>
+            <input type="text" name="amazon_tag" placeholder="Enter new tag..." required>
+            <button type="submit">Save Tag</button>
+        </form>
+        <a href="/" class="back">← Back to Search</a>
+    </div>
+
+</body>
+</html>

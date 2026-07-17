@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Add ASIN - Admin</title>
+
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+body {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  min-height: 100vh;
+  /* iPhone-style vibrant mesh gradient background */
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 30%, #0f3460 60%, #1a1a2e 100%);
+  background-attachment: fixed;
+  width: 100%;
+  padding-top: 100px;
+  overflow: hidden;
+}
+
+/* Soft light glow behind the glass */
+body::before {
+    content: "";
+    position: absolute;
+    width: 300px;
+    height: 300px;
+    background: rgba(0, 198, 255, 0.2);
+    filter: blur(100px);
+    border-radius: 50%;
+    top: 20%;
+    left: 10%;
+}
+
+.glass-card {
+  position: relative;
+  width: 90%;
+  max-width: 380px;
+  padding: 40px 30px;
+  /* High-end liquid glass effect */
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(25px) saturate(180%);
+  -webkit-backdrop-filter: blur(25px) saturate(180%);
+  border-radius: 35px;
+
+  /* Specular border highlights */
+  border: 1.5px solid rgba(255, 255, 255, 0.3);
+  border-bottom: 1.5px solid rgba(255, 255, 255, 0.1);
+  border-right: 1.5px solid rgba(255, 255, 255, 0.1);
+
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4);
+  transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.1);
+  text-align: center;
+  z-index: 10;
+}
+
+/* Smooth slide up for mobile keyboards */
+.glass-card.active {
+  transform: translateY(-85px);
+}
+
+.glass-card h2 {
+  color: #fff;
+  font-weight: 600;
+  font-size: 24px;
+  margin-bottom: 30px;
+  letter-spacing: -0.5px;
+}
+
+.input-group {
+  margin-bottom: 20px;
+}
+
+/* Dark, glassy input fields */
+.input-group input, .input-group textarea {
+  width: 100%;
+  padding: 16px;
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  outline: none;
+  border-radius: 18px;
+  color: #fff;
+  font-size: 16px;
+  transition: 0.3s;
+}
+
+.input-group textarea {
+  height: 120px;
+  resize: none;
+}
+
+/* Active focus glow */
+.input-group input:focus, .input-group textarea:focus {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: #00c6ff;
+  box-shadow: 0 0 15px rgba(0, 198, 255, 0.3);
+}
+
+/* Main Save Button - Apple System Blue */
+.btn-save {
+  width: 100%;
+  padding: 16px;
+  background: #007aff;
+  border: none;
+  border-radius: 18px;
+  color: white;
+  font-weight: 600;
+  font-size: 17px;
+  cursor: pointer;
+  transition: 0.3s;
+  box-shadow: 0 10px 20px rgba(0, 122, 255, 0.3);
+  margin-bottom: 15px;
+}
+
+.btn-save:active {
+  transform: scale(0.96);
+}
+
+/* Brightened Cancel Button with Red Hover */
+.cancel-btn {
+  display: block;
+  width: 100%;
+  padding: 14px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1.5px solid rgba(255, 255, 255, 0.5);
+  border-radius: 18px;
+  color: #ffffff;
+  text-decoration: none;
+  font-size: 15px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+}
+
+.cancel-btn:hover {
+  background: rgba(255, 68, 68, 0.2); /* Soft red tint */
+  border-color: #ff4444; /* Bright red border */
+  color: #ff4444; /* Red text */
+  box-shadow: 0 0 15px rgba(255, 68, 68, 0.3);
+}
+</style>
+</head>
+<body>
+
+<div class="glass-card" id="mainCard">
+    <h2>Add New ASIN</h2>
+
+    <form action="/add" method="POST">
+        <div class="input-group">
+            <input type="text" name="asin" placeholder="ASIN (e.g. B08XXXX)" required autocomplete="off">
+        </div>
+
+        <div class="input-group">
+            <textarea name="keyword_block" placeholder="Paste details here..." required></textarea>
+        </div>
+
+        <button type="submit" class="btn-save">Save ASIN</button>
+        <a href="/" class="cancel-btn">Cancel and Go Back</a>
+    </form>
+</div>
+
+<script>
+const inputs = document.querySelectorAll('input, textarea');
+const card = document.getElementById('mainCard');
+
+inputs.forEach(el => {
+  // Move card up on focus to clear the keyboard
+  el.addEventListener('focus', () => card.classList.add('active'));
+
+  // Move back down if boxes are empty on blur
+  el.addEventListener('blur', () => {
+    const hasText = Array.from(inputs).some(i => i.value.trim() !== "");
+    if (!hasText) card.classList.remove('active');
+  });
+});
+</script>
+
+</body>
+</html>

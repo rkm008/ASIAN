@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Animated Login</title>
+
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
+}
+
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  /* Matching your main site background */
+  background: linear-gradient(135deg, #1e3c72, #2a5298);
+  width: 100%;
+  overflow: hidden;
+  transition: 0.4s ease;
+}
+
+.ring {
+  position: relative;
+  width: 400px;
+  height: 400px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: 0.4s ease;
+}
+
+/* This makes the ring slide up when you tap on mobile keyboards */
+.ring.move-up {
+  transform: translateY(-170px);
+}
+
+.ring i {
+  position: absolute;
+  inset: 0;
+  border: 4px solid var(--clr);
+  filter: drop-shadow(0 0 15px var(--clr));
+  transition: 0.5s;
+}
+
+/* Blue, White, and Cyan rings */
+.ring i:nth-child(1) {
+  border-radius: 38% 62% 63% 37% / 41% 44% 56% 59%;
+  animation: animate 6s linear infinite;
+}
+
+.ring i:nth-child(2) {
+  border-radius: 41% 44% 56% 59% / 38% 62% 63% 37%;
+  animation: animate 4s linear infinite;
+}
+
+.ring i:nth-child(3) {
+  border-radius: 41% 44% 56% 59% / 38% 62% 63% 37%;
+  animation: animate2 10s linear infinite;
+}
+
+@keyframes animate {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes animate2 {
+  0% { transform: rotate(360deg); }
+  100% { transform: rotate(0deg); }
+}
+
+.login {
+  position: absolute;
+  width: 280px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.login h2 {
+  font-size: 2em;
+  color: #fff;
+  margin-bottom: 5px;
+}
+
+.inputBx {
+  width: 100%;
+}
+
+.inputBx input {
+  width: 100%;
+  padding: 12px 20px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 2px solid #fff;
+  border-radius: 40px;
+  font-size: 1em;
+  color: #fff;
+  outline: none;
+}
+
+/* Bright Cyan Button */
+.inputBx input[type="submit"] {
+  background: #00c6ff;
+  border: none;
+  cursor: pointer;
+  color: #fff;
+  font-weight: bold;
+  transition: 0.3s;
+}
+
+.inputBx input[type="submit"]:hover {
+  background: #0072ff;
+}
+
+.inputBx input::placeholder {
+  color: rgba(255,255,255,0.7);
+}
+
+/* Links at bottom */
+.bottom-links {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  padding: 0 5px;
+  margin-top: 5px;
+}
+
+.bottom-links a {
+  color: #fff;
+  text-decoration: none;
+  font-size: 0.7em;
+  opacity: 0.8;
+}
+
+.bottom-links a:hover {
+  opacity: 1;
+  text-decoration: underline;
+}
+
+/* Error message styling */
+.error-text {
+  color: #ff4444;
+  font-size: 0.8em;
+  font-weight: bold;
+  margin-bottom: -5px;
+  text-shadow: 0 0 5px rgba(0,0,0,0.5);
+}
+
+@media (max-width: 600px) {
+  .ring {
+    width: 320px;
+    height: 320px;
+  }
+  .login {
+    width: 240px;
+  }
+}
+</style>
+</head>
+<body>
+
+<div class="ring" id="ring">
+  <i style="--clr:#00c6ff;"></i>
+  <i style="--clr:#ffffff;"></i>
+  <i style="--clr:#0072ff;"></i>
+
+  <div class="login">
+    <h2>Login</h2>
+
+    {% if error %}
+      <div class="error-text">{{ error }}</div>
+    {% endif %}
+
+    <form method="POST" style="width: 100%; display: flex; flex-direction: column; gap: 15px;">
+      <div class="inputBx">
+        <input type="text" name="username" placeholder="Username" required>
+      </div>
+      <div class="inputBx">
+        <input type="password" name="password" placeholder="Password" required>
+      </div>
+      <div class="inputBx">
+        <input type="submit" value="Log In">
+      </div>
+
+      <div class="bottom-links">
+        <a href="https://www.facebook.com/rashedkhan08" target="_blank">Forgot Password?</a>
+        <a href="https://www.facebook.com/rashedkhan08" target="_blank">Contact Admin</a>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+const inputs = document.querySelectorAll("input[type='text'], input[type='password']");
+const ring = document.getElementById("ring");
+
+inputs.forEach(input => {
+  input.addEventListener("focus", () => {
+    ring.classList.add("move-up");
+  });
+
+  input.addEventListener("blur", () => {
+    ring.classList.remove("move-up");
+  });
+});
+</script>
+
+</body>
+</html>

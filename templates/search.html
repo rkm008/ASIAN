@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Live Search</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start; /* Changed to start so results can scroll */
+            min-height: 100vh;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 30%, #0f3460 60%, #1a1a2e 100%);
+            background-attachment: fixed;
+            width: 100%;
+            padding-top: 110px;
+        }
+
+        /* Soft light glow behind the glass */
+        body::before {
+            content: "";
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            background: rgba(0, 198, 255, 0.15);
+            filter: blur(100px);
+            border-radius: 50%;
+            top: 10%;
+            left: 5%;
+            z-index: 0;
+        }
+
+        .glass-container {
+            position: relative;
+            width: 90%;
+            max-width: 450px;
+            padding: 30px 20px;
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(25px) saturate(180%);
+            -webkit-backdrop-filter: blur(25px) saturate(180%);
+            border-radius: 35px;
+            border: 1.5px solid rgba(255, 255, 255, 0.3);
+            border-bottom: 1.5px solid rgba(255, 255, 255, 0.1);
+            border-right: 1.5px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4);
+            transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.1);
+            z-index: 10;
+        }
+
+        /* Keyboard Slide Up */
+        .glass-container.active {
+            transform: translateY(-30px);
+        }
+
+        .top-right {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            z-index: 20;
+        }
+
+        h1 {
+            color: #fff;
+            font-weight: 600;
+            font-size: 26px;
+            text-align: center;
+            margin-bottom: 10px;
+            letter-spacing: -0.5px;
+        }
+
+        #counterDisplay {
+            text-align: center;
+            color: #00c6ff;
+            font-weight: bold;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+
+        .search-wrapper {
+            position: relative;
+            width: 100%;
+            margin-bottom: 25px;
+        }
+
+        #searchInput {
+            width: 100%;
+            padding: 16px 50px 16px 20px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            outline: none;
+            border-radius: 20px;
+            color: #fff;
+            font-size: 16px;
+            transition: 0.3s;
+        }
+
+        #searchInput:focus {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: #00c6ff;
+            box-shadow: 0 0 15px rgba(0, 198, 255, 0.3);
+        }
+
+        .clear-btn {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #ff4444;
+            font-size: 26px;
+            font-weight: bold;
+            display: none;
+            user-select: none;
+            text-shadow: 0 0 10px rgba(255, 68, 68, 0.4);
+        }
+
+        /* Result Cards Styles */
+        .result-box {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 20px;
+            color: white;
+        }
+
+        .small-btn {
+            padding: 8px 15px;
+            border-radius: 12px;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 13px;
+            transition: 0.2s;
+            margin: 5px 2px;
+            background: #007aff;
+            color: white;
+        }
+
+        .edit-btn { background: #ff9f0a; }
+        .delete { background: #ff453a; }
+        .copy-success { background: #32d74b !important; }
+
+        .nav {
+            text-align: center;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* NEW STYLE: Boxy, rounded, and brighter links */
+        .nav a {
+            display: inline-block;
+            color: #ffffff;
+            text-decoration: none;
+            font-size: 14px;
+            margin: 10px 5px;
+            padding: 10px 18px;
+            background: rgba(255, 255, 255, 0.12); /* Brighter glass box */
+            border: 1.5px solid rgba(255, 255, 255, 0.4); /* High-contrast border */
+            border-radius: 18px;
+            font-weight: 600;
+            transition: 0.3s;
+        }
+
+        .nav a:hover {
+            background: rgba(255, 255, 255, 0.2);
+            color: #00c6ff;
+            border-color: #00c6ff;
+        }
+    </style>
+</head>
+<body>
+    <div class="top-right">
+        {% if logged_in %}
+            <a href="/logout"><button class="small-btn delete">Logout</button></a>
+        {% else %}
+            <a href="/login"><button class="small-btn edit-btn">Login</button></a>
+        {% endif %}
+    </div>
+
+<div class="glass-container" id="mainContainer">
+    <h1>Live Search</h1>
+    <p id="counterDisplay"></p>
+
+    <div class="search-wrapper">
+        <input type="text" id="searchInput" placeholder="Type ASIN..." autocomplete="off">
+        <span id="clearIcon" class="clear-btn">&times;</span>
+    </div>
+
+    <div id="results"></div>
+
+    <div class="nav">
+        {% if logged_in %}<a href="/add">Add ASIN</a>{% endif %}
+        <a href="/generator">Link Generator</a>
+    </div>
+</div>
+
+<script>
+// Logic to handle "Done!" state and clipboard
+function copyText(text, btn) {
+    const originalText = btn.innerText;
+    const textArea = document.createElement("textarea");
+    textArea.value = text;
+    document.body.appendChild(textArea);
+    textArea.select();
+    try {
+        document.execCommand('copy');
+        btn.innerText = "Done!🥳";
+        btn.classList.add("copy-success");
+        setTimeout(() => {
+            btn.innerText = originalText;
+            btn.classList.remove("copy-success");
+        }, 1000);
+    } catch (err) {
+        console.error("Copy failed");
+    }
+    document.body.removeChild(textArea);
+}
+
+function deleteAsin(id){
+    if (confirm("Delete this ASIN?")) {
+        fetch("/delete/" + id, { method: "DELETE" }).then(() => document.getElementById("card-"+id).remove());
+    }
+}
+
+const searchInput = document.getElementById("searchInput");
+const clearIcon = document.getElementById("clearIcon");
+const container = document.getElementById("mainContainer");
+
+// Keyboard Moving Up Logic
+searchInput.addEventListener("focus", () => container.classList.add("active"));
+searchInput.addEventListener("blur", () => {
+    if (searchInput.value.trim() === "") container.classList.remove("active");
+});
+
+// Clear logic for the Red X
+clearIcon.addEventListener("click", function() {
+    searchInput.value = "";
+    this.style.display = "none";
+    document.getElementById("results").innerHTML = "";
+    document.getElementById("counterDisplay").innerText = "";
+    container.classList.remove("active");
+    searchInput.focus();
+});
+
+searchInput.addEventListener("input", function() {
+    let query = this.value.trim();
+    let resultsDiv = document.getElementById("results");
+    let counter = document.getElementById("counterDisplay");
+
+    if (query === "") {
+        clearIcon.style.display = "none";
+        resultsDiv.innerHTML = "";
+        counter.innerText = "";
+        return;
+    } else {
+        clearIcon.style.display = "block";
+    }
+
+    fetch("/live_search", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ asin: query })
+    })
+    .then(response => response.json())
+    .then(data => {
+        // Safety Check
+        if (searchInput.value.trim() === "") {
+            resultsDiv.innerHTML = "";
+            counter.innerText = "";
+            return;
+        }
+
+        resultsDiv.innerHTML = "";
+        counter.innerText = data.results.length + " results found for '" + query + "'";
+
+        data.results.forEach(item => {
+            let card = document.createElement("div");
+            card.className = "result-box";
+            card.id = "card-" + item[0];
+            card.innerHTML = `
+                <div style="margin-bottom:10px;">
+                    <strong>ASIN:</strong> <span>${item[1]}</span>
+                    <button class="small-btn" onclick="copyText('${item[1]}', this)">Copy</button>
+                    ${data.logged_in ? `
+                        <a href="/edit/${item[0]}"><button class="small-btn edit-btn">Edit</button></a>
+                        <button class="small-btn delete" onclick="deleteAsin(${item[0]})">Delete</button>
+                    ` : ''}
+                </div>
+                <div id="keyword-${item[0]}" style="white-space: pre-wrap; overflow-wrap: anywhere; margin-bottom:10px; background:rgba(0,0,0,0.3); padding:12px; border-radius:15px; font-size:14px; border: 1px solid rgba(255,255,255,0.1);">${item[2]}</div>
+                <button class="small-btn" style="width:100%;" onclick="copyText(document.getElementById('keyword-${item[0]}').innerText, this)">Copy Keyword</button>
+            `;
+            resultsDiv.appendChild(card);
+        });
+    });
+});
+</script>
+</body>
+</html>
